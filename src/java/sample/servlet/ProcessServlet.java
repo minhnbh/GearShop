@@ -17,8 +17,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
+import sample.category.Category;
+import sample.craw.CrawData;
 import sample.page.Page;
 import sample.parser.Internet;
+import sample.product.Product;
 import sample.utils.XMLUtils;
 
 /**
@@ -41,47 +44,10 @@ public class ProcessServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            Internet internet = new Internet();
-
-            List<String> listFilePath = new ArrayList<>();
-            listFilePath.add(Page.prefixFilePath + "homepage.html");
-
-            List<String> listUri = new ArrayList<>();
-            listUri.add(Page.prefixGearVNUrl);
-
-            // get list category in home page
-            internet.parseListCategory(listFilePath, listUri);
-
-            //declare list of category list slugify
-            List<String> slugifyCategoryList = new ArrayList<>();
-            XMLUtils.getCategoriesSlugify(Page.prefixFilePath + "homepage.html", slugifyCategoryList);
-            System.out.println("--Done--\nGot a categories slugify list\n");
-
-            //declare list of product list slugify
-            List<String> slugifyProductList = new ArrayList<>();
             
-            for (int i = 0; i < slugifyCategoryList.size(); i++) {
-                listFilePath = new ArrayList<String>();
-                listUri = new ArrayList<>();
-                internet.parseProductPageGearVN(Page.prefixFilePath + "page-" + slugifyCategoryList.get(i).toString().replace("/collections/", "") + ".html",
-                        Page.prefixGearVNUrl + slugifyCategoryList.get(i).toString());
-                int page = XMLUtils.getPageOfCategory(Page.prefixFilePath + "page-" + slugifyCategoryList.get(i).toString().replace("/collections/", "") + ".html");
-                for (int j = 0; j < page; j++) {
-                    String categoryPage = Page.prefixGearVNUrl + slugifyCategoryList.get(i).toString() + "?page=" + (j + 1);
-                    String categoryFilePath = Page.prefixFilePath + "product-" + slugifyCategoryList.get(i).toString().replace("/collections/", "") + "-" + (j + 1) + ".html";
-                    listFilePath.add(categoryFilePath);
-                    listUri.add(categoryPage);
-                    internet.parseProductGearVN(listFilePath, listUri);
-                    System.out.println("Done: " + (j + 1) + "/" + page + "\n");
-                }
-                System.out.println("-*-Done-*-\n");
-                XMLUtils.getProductSlugify(listFilePath, slugifyProductList);
-                System.out.println(slugifyProductList.size());
-            }
+            CrawData.crawDataLeQuan();
 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ProcessServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (XMLStreamException ex) {
             Logger.getLogger(ProcessServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

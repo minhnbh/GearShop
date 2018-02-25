@@ -12,4 +12,6 @@ package sample.page;
 public class Page {
     public static String prefixGearVNUrl = "http://gearvn.com";
     public static String prefixFilePath = "F:\\STUDY\\XML\\exercise\\GearShop\\build\\web\\";
+    
+    public static String prefixLeQuanUrl = "http://lequanmobile.com";
 }

@@ -72,14 +72,14 @@ public class Product implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @XmlElement(name = "DateCreated", namespace = "www.ProductSchema.com", required = true)
     @XmlSchemaType(name = "dateTime")
-    private Date dateCreated;
+    private String dateCreated;
     
     @Basic(optional = false)
     @Column(name = "LastModified", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @XmlElement(name = "LastModified", namespace = "www.ProductSchema.com", required = true)
     @XmlSchemaType(name = "dateTime")
-    private Date lastModified;
+    private String lastModified;
     
     @Basic(optional = false)
     @Column(name = "Img", nullable = false, length = 255)
@@ -118,7 +118,7 @@ public class Product implements Serializable {
         this.productID = productID;
     }
 
-    public Product(Integer productID, String productName, String description, String price, Date dateCreated, Date lastModified, String img, String sku, int quantity, String slugify, int isDelete) {
+    public Product(Integer productID, String productName, String description, String price, String dateCreated, String lastModified, String img, String sku, int quantity, String slugify, int isDelete) {
         this.productID = productID;
         this.productName = productName;
         this.description = description;
@@ -164,19 +164,19 @@ public class Product implements Serializable {
         this.price = price;
     }
 
-    public Date getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public Date getLastModified() {
+    public String getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
     }
 
