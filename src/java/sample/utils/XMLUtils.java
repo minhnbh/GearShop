@@ -74,6 +74,65 @@ public class XMLUtils implements Serializable {
         }
     }
 
+    public static void getProductListLeQuan(List<String> listFilePath, List<String> listUrl, List<Product> productList) throws FileNotFoundException, XMLStreamException {
+        XMLInputFactory factory = XMLInputFactory.newFactory();
+        factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
+        factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
+        factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+        factory.setProperty(XMLInputFactory.IS_COALESCING, true);
+
+        InputStream is = null;
+        XMLStreamReader reader = null;
+        boolean inProduct = false;
+        Product product = new Product();
+
+        for (int i = 0; i < listFilePath.size(); i++) {
+            is = new FileInputStream(listFilePath.get(i).toString());
+            reader = factory.createXMLStreamReader(is);
+            while (reader.hasNext()) {
+                int cursor = reader.next();
+                if (cursor == XMLStreamConstants.START_ELEMENT) {
+                    String tagName = reader.getLocalName();
+                    if (tagName.equals("div")) {
+                        String divClass = XMLUtils.getAttrOfElement(reader, "", "class");
+                        if (divClass.equals("product-inner clearfix")) {
+                            product = new Product();
+                            inProduct = true;
+                        }
+                    }
+                    
+                    if (tagName.equals("a")) {
+                        String aClass = XMLUtils.getAttrOfElement(reader, "", "class");
+                        if (aClass.equals("woocommerce-LoopProduct-link")) {
+                            String aHref = XMLUtils.getAttrOfElement(reader, "", "href");
+                            product.setSlugify(aHref.replace(Page.prefixLeQuanUrl + "/san-pham/", ""));
+                        }
+                    }
+                    
+                    if (tagName.equals("img") && inProduct) {
+                        String imgClass = XMLUtils.getAttrOfElement(reader, "", "class");
+                        if (imgClass.equals("attachment-shop_catalog size-shop_catalog wp-post-image")) {
+                            product.setImg(XMLUtils.getAttrOfElement(reader, "", "src"));
+                        }
+                    }
+                    
+                    if (tagName.equals("h3") && inProduct) {
+                        product.setProductName(reader.getElementText());
+                    }
+                    
+                    if (tagName.equals("span") && inProduct) {
+                        String spanClass = XMLUtils.getAttrOfElement(reader, "", "class");
+                        if (spanClass.equals("woocommerce-Price-amount amount")) {
+                            reader.next();
+                            product.setPrice(reader.getText());
+                        }
+                        productList.add(product);
+                    }
+                }
+            }
+        }
+    }
+
     public static void getCategoriesSlugify(String filePath, List<String> slugifyList, List<Category> categoryList) throws FileNotFoundException, XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newFactory();
         factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
@@ -149,25 +208,25 @@ public class XMLUtils implements Serializable {
                             pos++;
                         }
                     }
-                    
+
                     if (tagName.equals("a")) {
                         String href = XMLUtils.getAttrOfElement(reader, "", "href");
                         product.setSlugify(href.replace("/products/", ""));
                     }
-                    
+
                     if (tagName.equals("img")) {
                         String imgClass = XMLUtils.getAttrOfElement(reader, "", "class");
                         if (imgClass.equals("product-row-thumbnail")) {
                             product.setImg(XMLUtils.getAttrOfElement(reader, "", "src"));
                         }
                     }
-                    
+
                     if (tagName.equals("h2")) {
                         if (XMLUtils.getAttrOfElement(reader, "", "class").equals("product-row-name")) {
                             product.setProductName(reader.getElementText());
                         }
                     }
-                    
+
                     if (tagName.equals("span")) {
                         if (XMLUtils.getAttrOfElement(reader, "", "class").equals("product-row-sale")) {
                             product.setPrice(reader.getElementText());

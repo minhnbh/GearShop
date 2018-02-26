@@ -82,6 +82,120 @@ public class Internet {
         }
     }
 
+    public static void parseCategoryPageLeQuan(List<String> listFilePath, List<String> listUri) {
+        Writer writer = null;
+        boolean inScript = false;
+        boolean inPagination = false;
+
+        try {
+            for (int i = 0; i < listUri.size(); i++) {
+                URL url = new URL(listUri.get(i).toString());
+                URLConnection con = url.openConnection();
+                con.addRequestProperty("User-agent", "Chrome/61.0.3163.100 (compatible; MSIE 6.0; Windows NT 5.0)");
+                InputStream is = con.getInputStream();
+                BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                String inputLine;
+                writer = new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(listFilePath.get(i).toString()), "UTF-8"));
+
+                while ((inputLine = in.readLine()) != null) {
+                    if (inputLine.contains("<script")) {
+                        inScript = true;
+                    }
+
+                    if (inputLine.contains("<nav class=\"woocommerce-pagination\"")) {
+                        inPagination = true;
+                    }
+
+                    if ((!inputLine.contains("script") && !inputLine.contains("noscript")
+                            && !inputLine.contains("meta") && !inputLine.contains("--")
+                            && !inputLine.contains("height=1") && !inputLine.contains("<input type=")
+                            && !inputLine.contains("data-interval") && !inputLine.contains("nbsp")
+                            && !inputLine.contains("footer") && !inputLine.contains("<link")
+                            && !inScript && inputLine.length() > 0 && inPagination)) {
+                        if (inputLine.contains("&ndash")) {
+                            inputLine = inputLine.replace("&ndash", "");
+                        }
+                        writer.write(inputLine.trim() + "\n");
+                    }
+
+                    if (inputLine.contains("</nav") && inPagination) {
+                        if (writer != null) {
+                            writer.close();
+                        }
+                        break;
+                    }
+
+                    if (inputLine.contains("</script")) {
+                        inScript = false;
+                    }
+                }
+            }
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Internet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Internet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Internet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void parseCategoryProductLeQuan(String filePath, String uri) {
+        Writer writer = null;
+        boolean inScript = false, inProduct = false;
+
+        try {
+            URL url = new URL(uri);
+            URLConnection con = url.openConnection();
+            con.addRequestProperty("User-agent", "Chrome/61.0.3163.100 (compatible; MSIE 6.0; Windows NT 5.0)");
+            InputStream is = con.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            String inputLine;
+            writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(filePath), "UTF-8"));
+
+            while ((inputLine = in.readLine()) != null) {
+                if (inputLine.contains("<script")) {
+                    inScript = true;
+                }
+
+                if (inputLine.contains("<ul class=\"products\"")) {
+                    inProduct = true;
+                }
+
+                if (inputLine.contains("<div class=\"shop-toolbar\"") && inProduct) {
+                    if (writer != null) {
+                        writer.close();
+                    }
+                    break;
+                }
+
+                if ((!inputLine.contains("script") && !inputLine.contains("noscript")
+                        && !inputLine.contains("meta") && !inputLine.contains("--")
+                        && !inputLine.contains("height=1") && !inputLine.contains("<input type=")
+                        && !inputLine.contains("data-interval") && !inputLine.contains("nbsp")
+                        && !inputLine.contains("footer") && !inputLine.contains("<link")
+                        && !inScript && inputLine.length() > 0 && inProduct)) {
+                    if (inputLine.contains("&ndash")) {
+                        inputLine = inputLine.replace("&ndash", "");
+                    }
+                    if (inputLine.contains("&nbsp;")) {
+                        inputLine = inputLine.replace("&nbsp;", "");
+                    }
+                    writer.write(inputLine.trim() + "\n");
+                }
+
+                if (inputLine.contains("</script>")) {
+                    inScript = false;
+                }
+            }
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Internet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Internet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static void parseListCategory(List<String> listFilePath, List<String> listUri) {
         Writer writer = null;
         boolean inScript = false;
