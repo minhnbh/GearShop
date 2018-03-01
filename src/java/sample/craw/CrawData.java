@@ -6,12 +6,14 @@
 package sample.craw;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import sample.category.Category;
+import sample.category.jaxb_Categories;
 import sample.page.Page;
 import sample.parser.Internet;
 import sample.product.Product;
@@ -25,16 +27,45 @@ public class CrawData {
 
     public static void crawDataLeQuan() {
         try {
+            List<Product> productList = new ArrayList<>();
+            List<Category> categoryList = new ArrayList<>();
+            List<String> listUri = new ArrayList<>();
+            List<String> listFilePath = new ArrayList<>();
+
             Internet internet = new Internet();
             internet.parseCategoryLeQuan(Page.prefixFilePath + "categoryList.html", Page.prefixLeQuanUrl + "/danh-muc/dien-thoai/");
-            List<Category> categoryList = new ArrayList<>();
-            XMLUtils.getLeQuanCategory(Page.prefixFilePath + "categoryList.html", categoryList);
+            XMLUtils.getLeQuanCategory(Page.prefixFilePath + "categoryList.html", categoryList, listUri);
+            System.out.println("Size: " + categoryList.size());
+//            for (int i = 0; i < categoryList.size(); i++) {
+//                String filePath = Page.prefixFilePath + "page-" + categoryList.get(i).getSlugify().replace("/", "") + ".html";
+//                String uri = listUri.get(i).toString();
+//                internet.parseCategoryPageLeQuan(filePath, uri);
+//                int page = XMLUtils.getCategoryPageLeQuan(filePath);
+//                System.out.println(filePath + " | page: " + String.valueOf(page));
+//                for (int j = 0; j < page; j++) {
+//                    filePath = Page.prefixFilePath + "product-" + categoryList.get(i).getSlugify().replace("/", "") + "-" + (j + 1) + ".html";
+//                    listFilePath.add(filePath);
+//                    internet.parseCategoryProductLeQuan(filePath, uri + "page/" + String.valueOf(j + 1));
+//                    System.out.println("Done: " + filePath);
+//                }
+//            }
+//            XMLUtils.getProductListLeQuan(listFilePath, productList);
             for (int i = 0; i < categoryList.size(); i++) {
-                System.out.println(categoryList.get(i).getCategoryName());
+                String xmlStr = XMLUtils.saveToXML(categoryList.get(i));
+                if (XMLUtils.validateXMLBeforeSaveToDB(Page.webPath + Page.categorySchemaPath, xmlStr)) {
+                    System.out.println("Valid");
+                } else {
+                    System.out.println("Invalid");
+                }
             }
+
+//            jaxb_Categories jaxbCategories = new jaxb_Categories();
+//            jaxbCategories.setCategory(categoryList);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(CrawData.class.getName()).log(Level.SEVERE, null, ex);
         } catch (XMLStreamException ex) {
+            Logger.getLogger(CrawData.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(CrawData.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

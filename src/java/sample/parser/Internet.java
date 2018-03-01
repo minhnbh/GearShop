@@ -82,53 +82,56 @@ public class Internet {
         }
     }
 
-    public static void parseCategoryPageLeQuan(List<String> listFilePath, List<String> listUri) {
+    public static void parseCategoryPageLeQuan(String filePath, String uri) {
         Writer writer = null;
         boolean inScript = false;
         boolean inPagination = false;
 
         try {
-            for (int i = 0; i < listUri.size(); i++) {
-                URL url = new URL(listUri.get(i).toString());
-                URLConnection con = url.openConnection();
-                con.addRequestProperty("User-agent", "Chrome/61.0.3163.100 (compatible; MSIE 6.0; Windows NT 5.0)");
-                InputStream is = con.getInputStream();
-                BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                String inputLine;
-                writer = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(listFilePath.get(i).toString()), "UTF-8"));
+            URL url = new URL(uri);
+            URLConnection con = url.openConnection();
+            con.addRequestProperty("User-agent", "Chrome/61.0.3163.100 (compatible; MSIE 6.0; Windows NT 5.0)");
+            InputStream is = con.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            String inputLine;
+            writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(filePath), "UTF-8"));
 
-                while ((inputLine = in.readLine()) != null) {
-                    if (inputLine.contains("<script")) {
-                        inScript = true;
-                    }
+            writer.write("<html>\n<div>\n</div>\n");
+            while ((inputLine = in.readLine()) != null) {
+                if (inputLine.contains("<script")) {
+                    inScript = true;
+                }
 
-                    if (inputLine.contains("<nav class=\"woocommerce-pagination\"")) {
-                        inPagination = true;
-                    }
+                if (inputLine.contains("<nav class=\"woocommerce-pagination\"")) {
+                    inPagination = true;
+                }
 
-                    if ((!inputLine.contains("script") && !inputLine.contains("noscript")
-                            && !inputLine.contains("meta") && !inputLine.contains("--")
-                            && !inputLine.contains("height=1") && !inputLine.contains("<input type=")
-                            && !inputLine.contains("data-interval") && !inputLine.contains("nbsp")
-                            && !inputLine.contains("footer") && !inputLine.contains("<link")
-                            && !inScript && inputLine.length() > 0 && inPagination)) {
-                        if (inputLine.contains("&ndash")) {
-                            inputLine = inputLine.replace("&ndash", "");
-                        }
-                        writer.write(inputLine.trim() + "\n");
+                if ((!inputLine.contains("script") && !inputLine.contains("noscript")
+                        && !inputLine.contains("meta") && !inputLine.contains("--")
+                        && !inputLine.contains("height=1") && !inputLine.contains("<input type=")
+                        && !inputLine.contains("data-interval") && !inputLine.contains("nbsp")
+                        && !inputLine.contains("footer") && !inputLine.contains("<link")
+                        && !inScript && inputLine.length() > 0 && inPagination)) {
+                    if (inputLine.contains("&ndash")) {
+                        inputLine = inputLine.replace("&ndash", "");
                     }
+                    if (inputLine.contains("&hellip")) {
+                        inputLine = inputLine.replace("&hellip", "");
+                    }
+                    writer.write(inputLine.trim() + "\n");
+                }
 
-                    if (inputLine.contains("</nav") && inPagination) {
-                        if (writer != null) {
-                            writer.close();
-                        }
-                        break;
+                if ((inputLine.contains("</nav") && inPagination) || inputLine.contains("</html>")) {
+                    writer.write("</html>\n");
+                    if (writer != null) {
+                        writer.close();
                     }
+                    break;
+                }
 
-                    if (inputLine.contains("</script")) {
-                        inScript = false;
-                    }
+                if (inputLine.contains("</script")) {
+                    inScript = false;
                 }
             }
         } catch (MalformedURLException ex) {
@@ -143,6 +146,7 @@ public class Internet {
     public static void parseCategoryProductLeQuan(String filePath, String uri) {
         Writer writer = null;
         boolean inScript = false, inProduct = false;
+        boolean outOfStock = true;
 
         try {
             URL url = new URL(uri);
@@ -159,6 +163,10 @@ public class Internet {
                     inScript = true;
                 }
 
+                if (inputLine.contains("woocommerce-LoopProduct-link")) {
+                    outOfStock = false;
+                }
+                
                 if (inputLine.contains("<ul class=\"products\"")) {
                     inProduct = true;
                 }
@@ -171,9 +179,9 @@ public class Internet {
                 }
 
                 if ((!inputLine.contains("script") && !inputLine.contains("noscript")
-                        && !inputLine.contains("meta") && !inputLine.contains("--")
+                        && !inputLine.contains("meta")
                         && !inputLine.contains("height=1") && !inputLine.contains("<input type=")
-                        && !inputLine.contains("data-interval") && !inputLine.contains("nbsp")
+                        && !inputLine.contains("data-interval")
                         && !inputLine.contains("footer") && !inputLine.contains("<link")
                         && !inScript && inputLine.length() > 0 && inProduct)) {
                     if (inputLine.contains("&ndash")) {
@@ -181,6 +189,12 @@ public class Internet {
                     }
                     if (inputLine.contains("&nbsp;")) {
                         inputLine = inputLine.replace("&nbsp;", "");
+                    }
+                    if (inputLine.contains("</span></a></div></li>") && outOfStock) {
+                        inputLine = inputLine.replace("</span></a></div></li>", "</div></li>");
+                    }
+                    else if (inputLine.contains("</span></a></div></li>") && !outOfStock) {
+                        outOfStock = true;
                     }
                     writer.write(inputLine.trim() + "\n");
                 }

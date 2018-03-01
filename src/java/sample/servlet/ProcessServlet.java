@@ -44,7 +44,9 @@ public class ProcessServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            
+            if (Page.webPath.isEmpty()) {
+                Page.webPath = getServletContext().getRealPath("/").toString();
+            }
             CrawData.crawDataLeQuan();
 
         } catch (FileNotFoundException ex) {

@@ -56,12 +56,17 @@ public class Category implements Serializable {
     @Basic(optional = false)
     @Lob
     @Column(name = "Description", nullable = false, length = 2147483647)
-    @XmlElement(name = "Description", namespace = "www.CategorySchema.com", required = true)
+    @XmlElement(name = "Description", namespace = "www.CategorySchema.com")
     private String description;
 
-    @XmlElement(name = "Product", namespace = "www.ProductSchema.com", required = true)
-    @Transient
-    private List<Product> product;
+    @Basic(optional = false)
+    @Column(name = "Slugify", nullable = false, length = 255)
+    @XmlElement(name = "Slugify", namespace = "www.CategorySchema.com")
+    private String slugify;
+    
+//    @XmlElement(name = "Product", namespace = "www.ProductSchema.com", required = true)
+//    @Transient
+//    private List<Product> product;
     
     public Category() {
     }
@@ -98,6 +103,14 @@ public class Category implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSlugify() {
+        return slugify;
+    }
+
+    public void setSlugify(String slugify) {
+        this.slugify = slugify;
     }
 
     @Override

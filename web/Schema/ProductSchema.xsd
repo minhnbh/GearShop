@@ -9,7 +9,6 @@ and open the template in the editor.
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            targetNamespace="www.ProductSchema.com"
            xmlns="www.ProductSchema.com"
-           xmlns:target="www.ProductVariantSchema.com"
            elementFormDefault="qualified">
            
            <xs:simpleType name="isDelete">
@@ -21,15 +20,6 @@ and open the template in the editor.
            <xs:simpleType name="ID">
                <xs:restriction base="xs:positiveInteger">
                    
-               </xs:restriction>
-           </xs:simpleType>
-           
-           <xs:simpleType name="NameCate">
-               <xs:restriction base="xs:string">
-                   <xs:enumeration value="Chuột" />
-                   <xs:enumeration value="Bàn phím" />
-                   <xs:enumeration value="Tai nghe" />
-                   <xs:enumeration value="CPU" />
                </xs:restriction>
            </xs:simpleType>
            
@@ -45,16 +35,16 @@ and open the template in the editor.
                        <xs:element name="ProductName" type="xs:string" />
                        <xs:element name="Description" type="xs:string" />
                        <xs:element name="Price" type="PriceDeclare" />
-                       <xs:element name="DateCreated" type="xs:dateTime" maxOccurs="1" />
-                       <xs:element name="LastModified" type="xs:dateTime" maxOccurs="0" />
+                       <xs:element name="DateCreated" type="xs:string" />
+                       <xs:element name="LastModified" type="xs:string" />
                        <xs:element name="Img" type="xs:string" minOccurs="1" />
                        <xs:element name="SKU" type="xs:string" minOccurs="1" />
                        <xs:element name="Quantity" type="xs:positiveInteger" />
+                       <xs:element name="Slugify" type="xs:string" />
                    </xs:sequence>
                    <xs:attribute name="ProductID" type="ID" use="required" />
                    <xs:attribute name="isDelete" type="isDelete" use="optional" default="false" />
                    <xs:attribute name="CategoryID" type="xs:positiveInteger" use="required" />
-                   <xs:attribute name="CategoryName" type="NameCate" use="required" />
                </xs:complexType>
            </xs:element>
 </xs:schema>

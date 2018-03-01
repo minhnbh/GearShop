@@ -9,21 +9,10 @@ and open the template in the editor.
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            targetNamespace="www.CategorySchema.com"
            xmlns="www.CategorySchema.com"
-           xmlns:target="www.ProductSchema.com"
            elementFormDefault="qualified">
-           <xs:import namespace="www.ProductSchema.com" schemaLocation="ProductSchema.xsd" />
-           
-           <xs:simpleType name="NameCate">
-               <xs:restriction base="xs:string">
-                   <xs:enumeration value="Chuột" />
-                   <xs:enumeration value="Bàn phím" />
-                   <xs:enumeration value="Tai nghe" />
-                   <xs:enumeration value="CPU" />
-               </xs:restriction>
-           </xs:simpleType>
            
            <xs:simpleType name="ID">
-               <xs:restriction base="xs:positiveInteger">
+               <xs:restriction base="xs:integer">
                    
                </xs:restriction>
            </xs:simpleType>
@@ -31,9 +20,9 @@ and open the template in the editor.
            <xs:element name="Category">
                <xs:complexType>
                    <xs:sequence>
-                       <xs:element name="CategoryName" type="NameCate" />
+                       <xs:element name="CategoryName" type="xs:string" />
                        <xs:element name="Description" type="xs:string" />
-                       <xs:element name="target:Product" maxOccurs="unbounded" />
+                       <xs:element name="Slugify" type="xs:string" />
                    </xs:sequence>
                    <xs:attribute name="CategoryID" type="ID" use="required" />
                </xs:complexType>
