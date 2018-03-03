@@ -1,0 +1,206 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Mar 3, 2018, 12:57:28 PM
+    Author     : MinhNBHSE61805
+*/
+
+html, body {
+	width: 100%;
+	margin: 0px;
+}
+
+.col-1 {
+	width: 8.333333%;
+}
+
+.col-2 {
+	width: 16.666667%;
+}
+
+.col-3 {
+	width: 25%;
+}
+
+.col-4 {
+	width: 33.333333%;
+}
+
+.col-5 {
+	width: 41.666667%;
+}
+
+.col-6 {
+	width: 50%;
+}
+
+.col-7 {
+	width: 58.333333%;
+}
+
+.col-8 {
+	width: 66.666667%;
+}
+
+.col-9 {
+	width: 75%;
+}
+
+.col-10 {
+	width: 83.333333%;
+}
+
+.col-11 {
+	width: 91.666667%;
+}
+
+.col-12 {
+	width: 100%;
+}
+
+.col-1 .col-2 .col-3 .col-4 .col-5 .col-6 .col-7 .col-8 .col-9 .col-10 .col-11 .col-12 {
+	flex: 1;
+}
+
+.col-offset-1 {
+	margin-left: 8.333333%;
+}
+
+.col-offset-2 {
+	margin-left: 16.666667%;
+}
+
+.col-offset-3 {
+	margin-left: 25%;
+}
+
+.col-offset-4 {
+	margin-left: 33.333333%;
+}
+
+.col-offset-5 {
+	margin-left: 41.666667%;
+}
+
+.col-offset-6 {
+	margin-left: 50%;
+}
+
+.col-offset-7 {
+	margin-left: 58.333333%;
+}
+
+.col-offset-8 {
+	margin-left: 66.666667%;
+}
+
+.col-offset-9 {
+	margin-left: 75%;
+}
+
+.col-offset-10 {
+	margin-left: 83.333333%;
+}
+
+.col-offset-11 {
+	margin-left: 91.666667%;
+}
+
+.col-offset-12 {
+	margin-left: 100%;
+}
+
+.row {
+	width: 100%;
+	display: flex;
+}
+
+.container {
+    width: 100%;
+}
+
+.header {
+	background-color: #E0E0E0;
+	height: 30px;
+}
+
+.hotline {
+	display: table;
+	text-align: right;
+	float: right;
+	width: 50%;
+	height: 100%;
+	line-height: 100%;
+}
+
+.hotline span {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.logo img {
+	margin-top: 10px;
+}
+.menu {
+	background-color: black;
+	margin-top: 10px;
+	height: 50px;
+}
+
+.menu ul {
+	list-style: none;
+	padding-left: 0px;
+	margin-top: 0px;
+	height: 100%;
+	float: left;
+}
+
+.menu li {
+	background-color: gray;
+	float: left;
+	color: white;
+	display: inline;
+	padding: 10px;
+	line-height: 30px;
+}
+
+.menu li:hover {
+	background-color: black;
+}
+
+.menu i {
+	line-height: 30px;
+	color: white;
+	font-weight: bold;
+}
+
+.sub-menu {
+	width: 200px;
+	background-color: black;
+	padding: 0px;
+	margin-top: 11px !important;
+	margin-left: -10px;
+}
+
+.sub-menu li {
+	width: 100%;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}

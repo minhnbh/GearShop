@@ -6,22 +6,25 @@
 package sample.category;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlTransient;
 import sample.product.Product;
 
 /**
@@ -31,20 +34,25 @@ import sample.product.Product;
 @Entity
 @Table(name = "Category", catalog = "GearShop", schema = "dbo")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    //"Category"
-})
 @XmlRootElement(name = "Category", namespace = "www.CategorySchema.com")
 @NamedQueries({
     @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c")
     , @NamedQuery(name = "Category.findByCategoryID", query = "SELECT c FROM Category c WHERE c.categoryID = :categoryID")
-    , @NamedQuery(name = "Category.findByCategoryName", query = "SELECT c FROM Category c WHERE c.categoryName = :categoryName")})
+    , @NamedQuery(name = "Category.findByCategoryName", query = "SELECT c FROM Category c WHERE c.categoryName = :categoryName")
+    , @NamedQuery(name = "Category.findByDescription", query = "SELECT c FROM Category c WHERE c.description = :description")
+    , @NamedQuery(name = "Category.findBySlugify", query = "SELECT c FROM Category c WHERE c.slugify = :slugify")
+    , @NamedQuery(name = "Category.findByParentID", query = "SELECT c FROM Category c WHERE c.parentID = :parentID")
+    , @NamedQuery(name = "Category.findByIsDelete", query = "SELECT c FROM Category c WHERE c.isDelete = :isDelete")})
 public class Category implements Serializable {
+
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "categoryID")
+//    private Collection<Product> productCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @Column(name = "CategoryID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlAttribute(name = "CategoryID", required = true)
     private Integer categoryID;
     
@@ -55,7 +63,7 @@ public class Category implements Serializable {
     
     @Basic(optional = false)
     @Lob
-    @Column(name = "Description", nullable = false, length = 2147483647)
+    @Column(name = "Description", nullable = false, length = 1000)
     @XmlElement(name = "Description", namespace = "www.CategorySchema.com")
     private String description;
 
@@ -64,10 +72,16 @@ public class Category implements Serializable {
     @XmlElement(name = "Slugify", namespace = "www.CategorySchema.com")
     private String slugify;
     
-//    @XmlElement(name = "Product", namespace = "www.ProductSchema.com", required = true)
-//    @Transient
-//    private List<Product> product;
+    @Basic(optional = false)
+    @Column(name = "ParentID", nullable = false)
+    @XmlAttribute(name = "ParentID", required = true)
+    private int parentID;
     
+    @Basic(optional = false)
+    @Column(name = "IsDelete", nullable = false)
+    @XmlAttribute(name = "IsDelete", required = true)
+    private int isDelete;
+
     public Category() {
     }
 
@@ -75,10 +89,13 @@ public class Category implements Serializable {
         this.categoryID = categoryID;
     }
 
-    public Category(Integer categoryID, String categoryName, String description) {
+    public Category(Integer categoryID, String categoryName, String description, String slugify, int parentID, int isDelete) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
         this.description = description;
+        this.slugify = slugify;
+        this.parentID = parentID;
+        this.isDelete = isDelete;
     }
 
     public Integer getCategoryID() {
@@ -113,6 +130,22 @@ public class Category implements Serializable {
         this.slugify = slugify;
     }
 
+    public int getParentID() {
+        return parentID;
+    }
+
+    public void setParentID(int parentID) {
+        this.parentID = parentID;
+    }
+
+    public int getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(int isDelete) {
+        this.isDelete = isDelete;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -138,4 +171,13 @@ public class Category implements Serializable {
         return "sample.category.Category[ categoryID=" + categoryID + " ]";
     }
 
+//    @XmlTransient
+//    public Collection<Product> getProductCollection() {
+//        return productCollection;
+//    }
+//
+//    public void setProductCollection(Collection<Product> productCollection) {
+//        this.productCollection = productCollection;
+//    }
+    
 }

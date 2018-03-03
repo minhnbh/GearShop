@@ -6,23 +6,19 @@
 package sample.product;
 
 import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
+import sample.category.Category;
 
 /**
  *
@@ -30,20 +26,22 @@ import javax.xml.bind.annotation.XmlSchemaType;
  */
 @Entity
 @Table(name = "Product", catalog = "GearShop", schema = "dbo")
-@XmlRootElement(name = "Product", namespace = "www.ProductSchema.com")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Product.findAll", query = "SELECT p FROM Product p")
     , @NamedQuery(name = "Product.findByProductID", query = "SELECT p FROM Product p WHERE p.productID = :productID")
     , @NamedQuery(name = "Product.findByProductName", query = "SELECT p FROM Product p WHERE p.productName = :productName")
+    , @NamedQuery(name = "Product.findByDescription", query = "SELECT p FROM Product p WHERE p.description = :description")
     , @NamedQuery(name = "Product.findByPrice", query = "SELECT p FROM Product p WHERE p.price = :price")
     , @NamedQuery(name = "Product.findByDateCreated", query = "SELECT p FROM Product p WHERE p.dateCreated = :dateCreated")
     , @NamedQuery(name = "Product.findByLastModified", query = "SELECT p FROM Product p WHERE p.lastModified = :lastModified")
     , @NamedQuery(name = "Product.findByImg", query = "SELECT p FROM Product p WHERE p.img = :img")
     , @NamedQuery(name = "Product.findBySku", query = "SELECT p FROM Product p WHERE p.sku = :sku")
     , @NamedQuery(name = "Product.findByQuantity", query = "SELECT p FROM Product p WHERE p.quantity = :quantity")
-    , @NamedQuery(name = "Product.findBySlugify", query = "SELECT p FROM Product p WHERE p.slugify = :slugify")})
+    , @NamedQuery(name = "Product.findBySlugify", query = "SELECT p FROM Product p WHERE p.slugify = :slugify")
+    , @NamedQuery(name = "Product.findByIsDelete", query = "SELECT p FROM Product p WHERE p.isDelete = :isDelete")})
 public class Product implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -56,29 +54,23 @@ public class Product implements Serializable {
     @XmlElement(name = "ProductName", namespace = "www.ProductSchema.com", required = true)
     private String productName;
     
-    @Basic(optional = false)
-    @Lob
-    @Column(name = "Description", nullable = false, length = 2147483647)
+    @Column(name = "Description", length = 1000)
     @XmlElement(name = "Description", namespace = "www.ProductSchema.com", required = true)
     private String description;
     
     @Basic(optional = false)
-    @Column(name = "Price", nullable = false, length = 20)
+    @Column(name = "Price", nullable = false, length = 50)
     @XmlElement(name = "Price", namespace = "www.ProductSchema.com", required = true)
     private String price;
     
     @Basic(optional = false)
-    @Column(name = "DateCreated", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DateCreated", nullable = false, length = 50)
     @XmlElement(name = "DateCreated", namespace = "www.ProductSchema.com", required = true)
-    @XmlSchemaType(name = "dateTime")
     private String dateCreated;
     
     @Basic(optional = false)
-    @Column(name = "LastModified", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LastModified", nullable = false, length = 50)
     @XmlElement(name = "LastModified", namespace = "www.ProductSchema.com", required = true)
-    @XmlSchemaType(name = "dateTime")
     private String lastModified;
     
     @Basic(optional = false)
@@ -100,17 +92,17 @@ public class Product implements Serializable {
     @Column(name = "Slugify", nullable = false, length = 255)
     @XmlElement(name = "Slugify", namespace = "www.ProductSchema.com", required = true)
     private String slugify;
-
+    
     @Basic(optional = false)
     @Column(name = "IsDelete", nullable = false)
     @XmlAttribute(name = "IsDelete")
     private int isDelete;
     
-    @Basic(optional = false)
-    @Column(name = "CategoryID", nullable = false)
-    @XmlAttribute(name = "CategoryID", required = true)
-    private BigInteger categoryID;
-    
+    @JoinColumn(name = "CategoryID", referencedColumnName = "CategoryID", nullable = false)
+    @ManyToOne(optional = false)
+    @XmlAttribute(name = "CategoryID")
+    private Category categoryID;
+
     public Product() {
     }
 
@@ -118,10 +110,9 @@ public class Product implements Serializable {
         this.productID = productID;
     }
 
-    public Product(Integer productID, String productName, String description, String price, String dateCreated, String lastModified, String img, String sku, int quantity, String slugify, int isDelete) {
+    public Product(Integer productID, String productName, String price, String dateCreated, String lastModified, String img, String sku, int quantity, String slugify, int isDelete) {
         this.productID = productID;
         this.productName = productName;
-        this.description = description;
         this.price = price;
         this.dateCreated = dateCreated;
         this.lastModified = lastModified;
@@ -220,14 +211,14 @@ public class Product implements Serializable {
         this.isDelete = isDelete;
     }
 
-    public BigInteger getCategoryID() {
+    public Category getCategoryID() {
         return categoryID;
     }
 
-    public void setCategoryID(BigInteger categoryID) {
+    public void setCategoryID(Category categoryID) {
         this.categoryID = categoryID;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;

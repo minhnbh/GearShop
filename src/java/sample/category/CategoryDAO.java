@@ -18,16 +18,30 @@ import javax.persistence.Query;
  *
  * @author MinhNBHSE61805
  */
-public class CategoryDAO implements Serializable{
-    
-    static EntityManagerFactory emf = Persistence.createEntityManagerFactory("ReviewJavaWebPU");
-    static EntityManager em = emf.createEntityManager();
-    
-    public static int addCategory(Category category) {
-        em.getTransaction().begin();
-        em.persist(category);
-        em.getTransaction().commit();
-        em.flush();
-        return category.getCategoryID();
+public class CategoryDAO implements Serializable {
+
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("GearShopPU");
+    EntityManager em = emf.createEntityManager();
+
+    public void persist(Object object) {
+        try {
+            em.getTransaction().begin();
+            em.persist(object);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", e);
+            em.getTransaction().rollback();
+        } finally {
+            em.close();
+        }
+    }
+
+    public int addCategory(Category category) {
+        if (category != null) {
+            persist(category);
+        } else {
+            return 0;
+        }
+        return 1;
     }
 }

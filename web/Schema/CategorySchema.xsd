@@ -25,6 +25,8 @@ and open the template in the editor.
                        <xs:element name="Slugify" type="xs:string" />
                    </xs:sequence>
                    <xs:attribute name="CategoryID" type="ID" use="required" />
+                   <xs:attribute name="ParentID" type="ID" use="required" />
+                   <xs:attribute name="IsDelete" type="ID" use="required" />
                </xs:complexType>
            </xs:element>
 </xs:schema>

@@ -74,6 +74,8 @@ public class XMLUtils implements Serializable {
                         category = new Category();
                         category.setCategoryID(0);
                         category.setDescription("");
+                        category.setIsDelete(0);
+                        category.setParentID(1);
                         pos++;
                     }
                 }
@@ -359,12 +361,9 @@ public class XMLUtils implements Serializable {
     public static <T> String saveToXML(T obj) {
         try {
             JAXBContext context = JAXBContext.newInstance(obj.getClass());
-            StringWriter sw = new StringWriter();
             Marshaller ms = context.createMarshaller();
-            ms.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            ms.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            StringWriter sw = new StringWriter();
             ms.marshal(obj, sw);
-            System.out.println(sw.toString());
             return sw.toString();
         } catch (JAXBException ex) {
             return null;

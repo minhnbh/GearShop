@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import sample.category.Category;
+import sample.category.CategoryDAO;
 import sample.category.jaxb_Categories;
 import sample.page.Page;
 import sample.parser.Internet;
@@ -31,6 +32,7 @@ public class CrawData {
             List<Category> categoryList = new ArrayList<>();
             List<String> listUri = new ArrayList<>();
             List<String> listFilePath = new ArrayList<>();
+            CategoryDAO categoryDAO = new CategoryDAO();
 
             Internet internet = new Internet();
             internet.parseCategoryLeQuan(Page.prefixFilePath + "categoryList.html", Page.prefixLeQuanUrl + "/danh-muc/dien-thoai/");
@@ -50,17 +52,19 @@ public class CrawData {
 //                }
 //            }
 //            XMLUtils.getProductListLeQuan(listFilePath, productList);
+            
             for (int i = 0; i < categoryList.size(); i++) {
                 String xmlStr = XMLUtils.saveToXML(categoryList.get(i));
+                System.out.println(xmlStr);
                 if (XMLUtils.validateXMLBeforeSaveToDB(Page.webPath + Page.categorySchemaPath, xmlStr)) {
                     System.out.println("Valid");
+                    categoryDAO.addCategory(categoryList.get(i));
+                    System.out.println("--Saved--");
                 } else {
                     System.out.println("Invalid");
                 }
             }
 
-//            jaxb_Categories jaxbCategories = new jaxb_Categories();
-//            jaxbCategories.setCategory(categoryList);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(CrawData.class.getName()).log(Level.SEVERE, null, ex);
         } catch (XMLStreamException ex) {
